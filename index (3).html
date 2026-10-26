@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulasi Interaktif Hukum Induksi Diri pada Kumparan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Simulasi Interaktif Hukum Induksi Diri pada Kumparan</h1>
+  <button class="btn" id="bTheme" aria-label="Ganti tema terang atau gelap">Tema</button>
+</header>
+<nav id="tabs" role="tablist" aria-label="Bagian aplikasi"></nav>
+<main>
+
+<section data-title="Simulasi" id="sim">
+  <div class="grid">
+    <div class="card" style="grid-area:sv">
+      <svg id="svg" viewBox="0 0 640 340" role="img" aria-label="Rangkaian RL seri: sumber, sakelar, resistor, amperemeter, kumparan, voltmeter dan medan magnet"></svg>
+      <p class="note">Garis medan magnet bersifat skematis, bukan distribusi medan kuantitatif. Pada solenoida ideal panjang, medan di dalam hampir seragam, sedangkan medan di luar lebih lemah dan melengkung kembali ke ujung lain.</p>
+      <p class="status" id="status" aria-live="polite">Tekan Mulai atau Sakelar untuk menghubungkan sumber.</p>
+      <div class="charts" id="miniCharts"></div>
+    </div>
+    <div class="card" style="grid-area:ctl">
+      <div class="btns">
+        <button class="btn p" id="bStart">Mulai</button>
+        <button class="btn" id="bPause">Jeda</button>
+        <button class="btn" id="bResume">Lanjutkan</button>
+        <button class="btn" id="bReset">Reset</button>
+        <button class="btn" id="bSw" aria-pressed="false">Sakelar: OFF</button>
+        <button class="btn" id="bDC" aria-pressed="true">Mode DC</button>
+        <button class="btn" id="bAC" aria-pressed="false">Mode AC</button>
+        <button class="btn" id="bExp">Mode eksperimen</button>
+        <button class="btn" id="bField" aria-pressed="true">Medan magnet</button>
+        <button class="btn" id="bGraph" aria-pressed="true">Grafik</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="solMode"> Hitung L dari solenoida: L = μ₀μr N² A / l (jika dimatikan, L diatur langsung oleh slider)</label>
+      <div id="ctl"></div>
+    </div>
+    <div class="card" style="grid-area:res">
+      <h2>Hasil perhitungan</h2>
+      <div class="res" id="res"></div>
+      <p class="warn" id="msg" role="alert"></p>
+      <p class="note">Rangkaian: sumber, sakelar, R, dan L dalam satu loop. Arus i positif searah jarum jam. Saat sakelar OFF, diasumsikan ada jalur pelepasan lewat R sehingga arus meluruh eksponensial. Mode AC memakai solusi eksak termasuk transien dari arus awal.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Teori" id="teori">
+  <div class="card">
+  <details open><summary>1. Pengertian induksi diri</summary><p>Induksi diri adalah timbulnya GGL induksi pada suatu kumparan akibat perubahan arus yang mengalir pada kumparan itu sendiri. Perubahan arus mengubah medan magnet dan fluks magnetik yang terkait dengan kumparan.</p></details>
+  <details><summary>2. Sejarah singkat</summary><p>Michael Faraday menemukan induksi elektromagnetik pada 1831. Joseph Henry menemukan induksi diri secara terpisah (satuan induktansi henry diambil dari namanya). Heinrich Lenz merumuskan arah GGL induksi pada 1834.</p></details>
+  <details><summary>3. Hukum Faraday</summary><p>ε = −N dΦB/dt. Untuk induktor linear, εL = −L di/dt, dengan εL (volt), L (henry), di/dt (A/s).</p></details>
+  <details><summary>4. Hukum Lenz</summary><p>Arah GGL induksi selalu menentang perubahan yang menyebabkannya. Tanda negatif pada rumus Faraday mewakili hal ini: arus naik ditentang, arus turun juga ditentang.</p></details>
+  <details><summary>5. Induktansi</summary><p>L = NΦB/i, secara umum L = λ/i dengan λ keterkaitan fluks (sistem linear). Satuannya henry: 1 H = 1 V·s/A.</p></details>
+  <details><summary>6. Faktor yang memengaruhi induktansi</summary><p>Untuk solenoida panjang ideal L = μN²A/l: bertambah dengan kuadrat jumlah lilitan, luas penampang, dan permeabilitas inti; berkurang jika kumparan makin panjang. Rumus ini pendekatan, tidak berlaku akurat untuk kumparan pendek atau inti yang jenuh.</p></details>
+  <details><summary>7. Energi magnetik</summary><p>W = ½Li². Contoh: L = 0,5 H dan i = 2 A menghasilkan W = ½·0,5·4 = 1 J. Induktor ideal menyimpan energi di medan magnet dan dapat mengembalikannya ke rangkaian.</p></details>
+  <details><summary>8. Respons transien RL</summary><p>τ = L/R. Saat sakelar menghubungkan sumber DC dari arus nol, i(t) = (V/R)(1 − e^(−t/τ)); pada t = τ arus mencapai 63,2% nilai akhir. Saat sumber dilepas dan ada jalur arus, i(t) = I₀e^(−t/τ). Arus induktor tidak dapat berubah seketika; jika jalurnya diputus mendadak, di/dt sangat besar dan timbul lonjakan tegangan.</p></details>
+  <details><summary>9. Induktor pada rangkaian AC</summary><p>XL = 2πfL. Untuk sinyal sinusoidal keadaan tunak, arus pada induktor ideal tertinggal 90° terhadap tegangan. Pada RL seri: Z = √(R² + XL²), φ = arctan(XL/R), Irms = Vrms/Z.</p></details>
+  <details><summary>10. Penerapan sehari-hari</summary><p>Choke dan filter catu daya, ballast lampu, kumparan pengapian, transformator, serta pengisian nirkabel memanfaatkan induktansi.</p></details>
+  <details><summary>11. Induksi diri dan induksi bersama</summary><p>Induksi diri: GGL muncul pada kumparan yang arusnya berubah. Induksi bersama: perubahan arus di satu kumparan menimbulkan GGL pada kumparan lain, ε₂ = −M di₁/dt.</p></details>
+  <details><summary>12. Kesalahan umum</summary><p>(a) εL bukan sumber yang membalik arus; ia menentang perubahannya. (b) Arus induktor tidak melompat. (c) τ tidak mengubah arus tunak V/R. (d) εL dan vL berbeda polaritas referensi: vL = −εL. (e) Pada DC tunak, induktor ideal berperilaku seperti kawat (vL = 0). (f) XL tidak berlaku untuk DC.</p></details>
+  </div>
+</section>
+
+<section data-title="Rumus" id="rumus">
+  <div class="card">
+<pre>
+Hukum Faraday          ε = −N dΦB/dt                 [V]
+Induktor linear        εL = −L di/dt                 [V]
+Tegangan terminal      vL = +L di/dt  (konvensi pasif)  → εL = −vL
+                       (konsisten: polaritas referensi GGL dan terminal berlawanan)
+Induktansi             L = NΦB/i = λ/i               [H]
+Solenoida ideal        L = μN²A/l,  μ = μ₀μr,  μ₀ = 4π×10⁻⁷ H/m
+Energi                 W = ½Li²                      [J]
+Konstanta waktu RL     τ = L/R                       [s]
+Arus naik (DC)         i(t) = (V/R)(1 − e^(−t/τ))
+Arus turun             i(t) = I₀ e^(−t/τ)
+KVL                    vL + vR = V
+Reaktansi              XL = 2πfL                     [Ω]
+RL seri AC             Z = √(R² + XL²),  φ = arctan(XL/R),  Irms = Vrms/Z,  cosφ = R/Z
+</pre>
+    <h2>Contoh perhitungan dengan parameter saat ini</h2>
+    <pre id="ex"></pre>
+  </div>
+</section>
+
+<section data-title="Grafik" id="grafik">
+  <div class="card"><p class="note">Grafik diperbarui saat simulasi berjalan. Sentuh atau arahkan kursor ke grafik untuk melihat nilai. Jeda, lanjutkan, dan reset memakai tombol di tab Simulasi.</p></div>
+  <div class="charts" id="bigCharts"></div>
+</section>
+
+<section data-title="Eksperimen" id="eksperimen"><div id="exps"></div></section>
+
+<section data-title="Kuis" id="kuis"><div id="quiz"></div></section>
+
+<section data-title="Tentang" id="tentang">
+  <div class="card">
+    <p>Aplikasi belajar mandiri untuk tugas kuliah tentang Hukum Induksi Diri. Berjalan penuh di peramban tanpa server. Perhitungan memakai solusi analitik eksak rangkaian RL seri, bukan integrasi numerik.</p>
+    <p>Batasan model: induktor dan sumber ideal, L konstan (tanpa kejenuhan inti), tanpa hambatan kawat kumparan terpisah (gabung ke R), medan magnet digambar skematis.</p>
+    <p>Desain terinspirasi simulasi pendidikan interaktif, tetapi bukan salinan PhET.</p>
+  </div>
+</section>
+
+</main>
+<script src="script.js"></script>
+</body>
+</html>
